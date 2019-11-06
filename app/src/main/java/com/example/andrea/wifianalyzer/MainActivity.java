@@ -22,14 +22,13 @@ import android.widget.Toast;
 import java.util.List;
 
 public class MainActivity extends Activity {
-    Button enableButton, disableButton;
+    Button enableButton;
     Context context = this;
-    final String[] permissions = new String[]{Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.CHANGE_WIFI_STATE};
+    final String[] permissions = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION
+            };
 
-    private final int ALLPERMISSION = 1;
+    private final int ALL_PERMISSION = 1;
 
 
     @Override
@@ -37,21 +36,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         checkPermission();
         setContentView(R.layout.activity_main);
+        final WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
 
         enableButton = findViewById(R.id.button1);
-        disableButton = findViewById(R.id.button2);
         enableButton.setOnClickListener(new OnClickListener() {
-            /*public void onClick(View v){
-                WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                wifi.setWifiEnabled(true);
-            }*/
-            WifiManager wifiManager = (WifiManager)
-                    context.getSystemService(Context.WIFI_SERVICE);
 
             @Override
             public void onClick(View v) {
 
-                Log.i("CLICCATO", "true");
+                Log.i("::WIFI ANALISYS START::", "STARTED");
                 BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context c, Intent intent) {
@@ -75,35 +68,36 @@ public class MainActivity extends Activity {
                     // scan failure handling
                     scanFailure(wifiManager);
                 }
-
             }
         });
     }
 
-
     private void scanSuccess(WifiManager wifiManager) {
+        Log.e("SCAN SUCCESS::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
-        Log.i("scanSuccess", results.toString());
+        for (ScanResult res: results) {
+            Log.i("RETE::::", res.toString());
+        }
     }
 
     private void scanFailure(WifiManager wifiManager) {
         // handle failure: new scan did NOT succeed
         // consider using old scan results: these are the OLD results!
+        Log.e("SCAN FAILED::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
-        Log.i("scanFailure", results.toString());
+        Log.e("::FAILURE::", "Loaded old results.");
+        for (ScanResult res: results) {
+            Log.i("RETE::::", res.toString());
+        }
     }
 
     public void checkPermission(){
         if (Build.VERSION.SDK_INT >= 23) {
 
-            if (checkSelfPermission(Manifest.permission.ACCESS_WIFI_STATE)
-                    != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.CHANGE_WIFI_STATE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.v("PERMISSION:::","Permission is NOT granted");
-
-                ActivityCompat.requestPermissions(this, permissions, ALLPERMISSION);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                Log.i("PERMISSION:::","Permission is NOT granted");
+                requestPermissions(permissions, ALL_PERMISSION);
 
             }else{
                 Log.v("PERMISSION:::","Permission already be granted");
@@ -116,7 +110,7 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case ALLPERMISSION:
+            case ALL_PERMISSION:
                 if (grantResults.length > 0 && permissions.length==grantResults.length) {
                     Log.e("PERMISSION OK:::::", "Permission Granted.");
                 }else{
