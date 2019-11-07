@@ -5,7 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.rtt.RangingRequest;
 import android.net.wifi.rtt.RangingResult;
@@ -61,20 +64,24 @@ public class MainActivity extends Activity {
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
-                boolean success = intent.getBooleanExtra(
-                        WifiManager.EXTRA_RESULTS_UPDATED, false);
-                if (success) {
-                    scanSuccess(wifiManager);
-                } else {
-                    // scan failure handling
-                    scanFailure(wifiManager);
+                    if(intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false))
+                        scanSuccess(wifiManager);
+                    else
+                        scanFailure(wifiManager);
+
+
+                if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
+                    Log.i("RECEIVED ACTION::::", "NET INFO");
+                        WifiInfo myConnInfo = wifiManager.getConnectionInfo ();
+                        Log.v("MY CONN:::::", myConnInfo.toString());
                 }
             }
         };
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        context.registerReceiver(wifiScanReceiver, intentFilter);
+        IntentFilter filterScan = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        IntentFilter filterConn = new IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(wifiScanReceiver, filterScan);
+        registerReceiver(wifiScanReceiver, filterConn);
 
         progressBar = findViewById(R.id.progressBar2);
         enableButton = findViewById(R.id.button1);
