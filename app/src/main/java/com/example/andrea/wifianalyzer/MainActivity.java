@@ -31,6 +31,21 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +56,7 @@ public class MainActivity extends Activity {
     RecyclerView apRecyclerView;
     ApViewAdapter adapter;
     Context context = this;
-    final String[] permissions = new String[]{
-            Manifest.permission.ACCESS_FINE_LOCATION
-            };
+    final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION };
 
     private final int ALL_PERMISSION = 1;
     private int progressStatus = 0;
@@ -73,7 +86,7 @@ public class MainActivity extends Activity {
                 if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
                     Log.i("RECEIVED ACTION::::", "NET INFO");
                         WifiInfo myConnInfo = wifiManager.getConnectionInfo ();
-                        Log.v("MY CONN:::::", myConnInfo.toString());
+                        Log.i("AndreaFonte", myConnInfo.toString());
                 }
             }
         };
@@ -89,23 +102,84 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                Log.i("::WIFI ANALISYS START::", "STARTED");
+                Log.i("::asdasd::", "STARTED");
                 wifiManager.startScan();
-                progressStatus = 0;
-                // Visible the progress bar
                 progressBar.setVisibility(View.VISIBLE);
+                List<ScanResult> results = wifiManager.getScanResults();
 
             }
         });
+
     }
 
     private void scanSuccess(WifiManager wifiManager) {
-        Log.e("SCAN SUCCESS::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
+        Log.i("AndreaFonte", results.toString());
         progressBar.setVisibility(View.GONE);
         adapter = new ApViewAdapter(this, parseData(results));
         apRecyclerView.setAdapter(adapter);
+        for(ScanResult sr : results){
+            try {
+                RequestQueue requestQueue = Volley.newRequestQueue(context);
+                Log.i("VOLLEY", sr.SSID);
+                String URL = "http://192.168.43.250:8080/test/data";
+                JSONObject jsonBody = new JSONObject();
+                jsonBody.put("ssid", sr.SSID);
+                jsonBody.put("qualita", sr.level);
+                jsonBody.put("larghezza_banda", sr.frequency);
+                jsonBody.put("distance", "");
+                jsonBody.put("canale", sr.channelWidth);
+                jsonBody.put("SignalStrenght", "");
+                jsonBody.put("tdata", "");
+                jsonBody.put("tora", "");
+                final String requestBody = jsonBody.toString();
 
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("VOLLEY", response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VOLLEY", error.toString());
+                    }
+                }) {
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json; charset=utf-8";
+                    }
+
+                    @Override
+                    public byte[] getBody() throws AuthFailureError {
+                        try {
+                            return requestBody == null ? null : requestBody.getBytes("utf-8");
+                        } catch (UnsupportedEncodingException uee) {
+                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                        String responseString = "";
+                        if (response != null) {
+                            responseString = String.valueOf(response.statusCode);
+                            // can get more details such as response.headers
+                        }
+                        return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                };
+                try {
+                    Log.e("VOLLEY",stringRequest.getBody().toString());
+                } catch (AuthFailureError authFailureError) {
+                    authFailureError.printStackTrace();
+                }
+                requestQueue.add(stringRequest);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void scanFailure(WifiManager wifiManager) {
