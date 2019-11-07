@@ -8,6 +8,11 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/apView"
+        android:layout_width="match_parent"
+        android:layout_height="613dp" />
+
     <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
