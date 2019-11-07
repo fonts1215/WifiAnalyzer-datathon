@@ -84,18 +84,19 @@ public class MainActivity extends Activity {
 
 
                 if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
-                    Log.i("RECEIVED ACTION::::", "NET INFO");
-                        WifiInfo myConnInfo = wifiManager.getConnectionInfo ();
+                    WifiInfo myConnInfo = wifiManager.getConnectionInfo ();
+                    Log.i("RECEIVED ACTION::::", "NET INFO" + myConnInfo.toString());
                     try {
                         RequestQueue requestQueue = Volley.newRequestQueue(context);
                         String URL = "http://192.168.137.192:8080/test/data/myRete";
                         JSONObject jsonBody = new JSONObject();
                         jsonBody.put("describeContents", myConnInfo.describeContents());
+                        jsonBody.put("networkID", myConnInfo.getNetworkId());
                         jsonBody.put("bbsid", myConnInfo.getBSSID());
                         jsonBody.put("frequency", myConnInfo.getFrequency());
                         jsonBody.put("hiddenSSID", myConnInfo.getHiddenSSID());
                         jsonBody.put("ssid", myConnInfo.getSSID());
-                        jsonBody.put("linkSpeed", myConnInfo.getLinkSpeed());
+                        jsonBody.put("linkspeed", myConnInfo.getLinkSpeed());
                         jsonBody.put("macAddress", myConnInfo.getMacAddress());
                         jsonBody.put("rssi", myConnInfo.getRssi());
                         final String requestBody = jsonBody.toString();
@@ -195,6 +196,7 @@ public class MainActivity extends Activity {
                 jsonBody.put("timestamp", sr.timestamp);
                 jsonBody.put("capabilities", sr.capabilities);
                 jsonBody.put("operatorFriendlyName", sr.operatorFriendlyName);
+                jsonBody.put("distanceFromRouter", calculateDistance(sr.level, sr.frequency));
                 final String requestBody = jsonBody.toString();
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
