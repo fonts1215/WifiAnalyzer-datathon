@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.security.Permission;
@@ -32,6 +34,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     Button enableButton;
+    ProgressBar progressBar;
     RecyclerView apRecyclerView;
     ApViewAdapter adapter;
     Context context = this;
@@ -40,7 +43,8 @@ public class MainActivity extends Activity {
             };
 
     private final int ALL_PERMISSION = 1;
-
+    private int progressStatus = 0;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,18 +76,18 @@ public class MainActivity extends Activity {
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
         context.registerReceiver(wifiScanReceiver, intentFilter);
 
+        progressBar = findViewById(R.id.progressBar2);
         enableButton = findViewById(R.id.button1);
         enableButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
                 Log.i("::WIFI ANALISYS START::", "STARTED");
-                boolean success = wifiManager.startScan();
-                if (!success) {
-                    // scan failure handling
-                    scanFailure(wifiManager);
-                }
+                wifiManager.startScan();
+                progressStatus = 0;
+                // Visible the progress bar
+                progressBar.setVisibility(View.VISIBLE);
+
             }
         });
     }
@@ -91,6 +95,7 @@ public class MainActivity extends Activity {
     private void scanSuccess(WifiManager wifiManager) {
         Log.e("SCAN SUCCESS::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
+        progressBar.setVisibility(View.GONE);
         adapter = new ApViewAdapter(this, parseData(results));
         apRecyclerView.setAdapter(adapter);
 
@@ -99,6 +104,7 @@ public class MainActivity extends Activity {
     private void scanFailure(WifiManager wifiManager) {
         Log.e("SCAN FAILED::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
+        progressBar.setVisibility(View.GONE);
         Log.e("::FAILURE::", "Loaded old results.");
         adapter = new ApViewAdapter(this, parseData(results));
         apRecyclerView.setAdapter(adapter);

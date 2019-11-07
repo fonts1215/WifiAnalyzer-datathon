@@ -36,6 +36,7 @@ public class ApViewAdapter extends RecyclerView.Adapter<ApViewAdapter.ViewHolder
         holder.distance.setText("DIST:" + String.valueOf(ap.getDistance()));
         holder.signal.setText("SIGN: " + String.valueOf(ap.getSignalStrenght()));
         holder.time.setText("TIME: " + String.valueOf(ap.timestamp));
+        holder.scanNumber.setText("SCAN NUMBER: " + String.valueOf(ap.misurationNumber));
     }
 
     // total number of rows
@@ -51,6 +52,7 @@ public class ApViewAdapter extends RecyclerView.Adapter<ApViewAdapter.ViewHolder
         TextView distance;
         TextView signal;
         TextView time;
+        TextView scanNumber;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -58,6 +60,7 @@ public class ApViewAdapter extends RecyclerView.Adapter<ApViewAdapter.ViewHolder
             distance = itemView.findViewById(R.id.distance);
             signal = itemView.findViewById(R.id.signal);
             time = itemView.findViewById(R.id.time);
+            scanNumber = itemView.findViewById(R.id.scanNumber);
             itemView.setOnClickListener(this);
         }
 

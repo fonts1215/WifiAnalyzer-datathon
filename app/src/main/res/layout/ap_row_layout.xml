@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    >
+
+    <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    >
 
     <TextView
         android:id="@+id/ssid"
@@ -37,6 +46,15 @@
         android:textSize="20sp"
         android:layout_marginHorizontal="16px"
         android:text="TIME: 11:22"/>
+    <TextView
+        android:id="@+id/scanNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginHorizontal="16px"
+        android:text="SCAN.N: 1"/>
 
 
 </LinearLayout>
+
+</android.support.v7.widget.CardView>
