@@ -210,10 +210,15 @@ public class MainActivity extends Activity {
     }
 
     private void scanFailure(WifiManager wifiManager) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-YYYY HH:mm:ss");
+        Date currentTime = Calendar.getInstance().getTime();
+        String time = simpleDateFormat.format(currentTime);
         Log.e("SCAN FAILED::::", "X");
         List<ScanResult> results = wifiManager.getScanResults();
         progressBar.setVisibility(View.GONE);
         Log.e("::FAILURE::", "Loaded old results.");
+        adapter = new ApViewAdapter(this, parseData(results, time));
+        apRecyclerView.setAdapter(adapter);
     }
 
     private double calculateDistance(double signalLevelInDb, double freqInMHz) {
@@ -228,7 +233,7 @@ public class MainActivity extends Activity {
         speed.setText(""+myConnInfo.getLinkSpeed());
 
         int qualityNumber = myConnInfo.getRssi();
-        String qualityLabel = "";
+        String qualityLabel = "GOOD";
         if(qualityNumber < -89){
             quality.setTextSize(TypedValue.COMPLEX_UNIT_PX, 64);
             qualityLabel = "BAD";
@@ -262,7 +267,7 @@ public class MainActivity extends Activity {
             jsonBody.put("frequency", myConnInfo.getFrequency());
             jsonBody.put("hiddenSSID", myConnInfo.getHiddenSSID());
             jsonBody.put("ssid", myConnInfo.getSSID());
-            jsonBody.put("linkSpeed", myConnInfo.getLinkSpeed());
+            jsonBody.put("linkspeed", myConnInfo.getLinkSpeed());
             jsonBody.put("macAddress", myConnInfo.getMacAddress());
             jsonBody.put("rssi", myConnInfo.getRssi());
             final String requestBody = jsonBody.toString();
