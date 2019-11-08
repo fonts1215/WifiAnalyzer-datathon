@@ -86,7 +86,69 @@ public class MainActivity extends Activity {
                 if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
                     Log.i("RECEIVED ACTION::::", "NET INFO");
                         WifiInfo myConnInfo = wifiManager.getConnectionInfo ();
-                        Log.i("AndreaFonte", myConnInfo.toString());
+                    try {
+                        RequestQueue requestQueue = Volley.newRequestQueue(context);
+                        String URL = "http://192.168.137.192:8080/test/data/myRete";
+                        JSONObject jsonBody = new JSONObject();
+                        jsonBody.put("describeContents", myConnInfo.describeContents());
+                        jsonBody.put("bbsid", myConnInfo.getBSSID());
+                        jsonBody.put("frequency", myConnInfo.getFrequency());
+                        jsonBody.put("hiddenSSID", myConnInfo.getHiddenSSID());
+                        jsonBody.put("ssid", myConnInfo.getSSID());
+                        jsonBody.put("linkSpeed", myConnInfo.getLinkSpeed());
+                        jsonBody.put("macAddress", myConnInfo.getMacAddress());
+                        jsonBody.put("rssi", myConnInfo.getRssi());
+                        final String requestBody = jsonBody.toString();
+                        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.i("VOLLEY", response);
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e("VOLLEY", error.toString());
+                            }
+                        }) {
+                            @Override
+                            public String getBodyContentType() {
+                                return "application/json; charset=utf-8";
+                            }
+
+                            @Override
+                            public byte[] getBody() throws AuthFailureError {
+                                try {
+                                    return requestBody == null ? null : requestBody.getBytes("utf-8");
+                                } catch (UnsupportedEncodingException uee) {
+                                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                                    return null;
+                                }
+                            }
+
+                            @Override
+                            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                                String responseString = "";
+                                if (response != null) {
+                                    responseString = String.valueOf(response.statusCode);
+                                    // can get more details such as response.headers
+                                }
+                                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+                            }
+                        };
+                        try {
+                            Log.e("VOLLEY",stringRequest.getBody().toString());
+                        } catch (AuthFailureError authFailureError) {
+                            authFailureError.printStackTrace();
+                        }
+                        requestQueue.add(stringRequest);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+
                 }
             }
         };
@@ -105,8 +167,6 @@ public class MainActivity extends Activity {
                 Log.i("::asdasd::", "STARTED");
                 wifiManager.startScan();
                 progressBar.setVisibility(View.VISIBLE);
-                List<ScanResult> results = wifiManager.getScanResults();
-
             }
         });
 
@@ -122,16 +182,19 @@ public class MainActivity extends Activity {
             try {
                 RequestQueue requestQueue = Volley.newRequestQueue(context);
                 Log.i("VOLLEY", sr.SSID);
-                String URL = "http://192.168.43.250:8080/test/data";
+                String URL = "http://192.168.137.192:8080/test/data/findReti";
                 JSONObject jsonBody = new JSONObject();
+                jsonBody.put("venueName", sr.venueName);
+                jsonBody.put("frequency", sr.frequency);
+                jsonBody.put("channelWidth", sr.channelWidth);
+                jsonBody.put("level", sr.level);
                 jsonBody.put("ssid", sr.SSID);
-                jsonBody.put("qualita", sr.level);
-                jsonBody.put("larghezza_banda", sr.frequency);
-                jsonBody.put("distance", "");
-                jsonBody.put("canale", sr.channelWidth);
-                jsonBody.put("SignalStrenght", "");
-                jsonBody.put("tdata", "");
-                jsonBody.put("tora", "");
+                jsonBody.put("bssid", sr.BSSID);
+                jsonBody.put("centerFreq0", sr.centerFreq0);
+                jsonBody.put("centerFreq1", sr.centerFreq1);
+                jsonBody.put("timestamp", sr.timestamp);
+                jsonBody.put("capabilities", sr.capabilities);
+                jsonBody.put("operatorFriendlyName", sr.operatorFriendlyName);
                 final String requestBody = jsonBody.toString();
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
