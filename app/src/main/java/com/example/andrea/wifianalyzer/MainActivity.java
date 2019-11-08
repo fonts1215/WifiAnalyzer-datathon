@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkPermission();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.user_dashboard);
 
         apRecyclerView = findViewById(R.id.apView);
         apRecyclerView.setLayoutManager(new LinearLayoutManager(this));
