@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class ApViewAdapter extends RecyclerView.Adapter<ApViewAdapter.ViewHolder>{
@@ -35,7 +36,7 @@ public class ApViewAdapter extends RecyclerView.Adapter<ApViewAdapter.ViewHolder
         holder.ssid.setText("NAME: " + ap.SSID);
         holder.distance.setText("DIST:" + String.valueOf(ap.getDistance()));
         holder.signal.setText("SIGN: " + String.valueOf(ap.getSignalStrenght()));
-        holder.time.setText("TIME: " + String.valueOf(ap.timestamp));
+        holder.time.setText("TIME: " + String.valueOf(ap.time));
         holder.scanNumber.setText("SCAN NUMBER: " + String.valueOf(ap.misurationNumber));
     }
 

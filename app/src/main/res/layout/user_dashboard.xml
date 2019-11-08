@@ -70,11 +70,11 @@
                     android:id="@+id/textView19"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Network:"
+                    android:text="Network: "
                     android:textColor="#EFF1F3" />
 
                 <TextView
-                    android:id="@+id/textView20"
+                    android:id="@+id/SSID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NetResult.com - AP"
@@ -90,6 +90,7 @@
         android:id="@+id/linearLayout3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-16px"
         android:orientation="horizontal"
         android:padding="24px"
         android:weightSum="3"
@@ -124,7 +125,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/users"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3"
@@ -173,7 +174,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="8"
@@ -284,7 +285,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView11"
+                    android:id="@+id/speed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0.0"
@@ -333,19 +334,20 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/quality"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="GOOD"
+                    android:textAlignment="center"
                     android:textColor="#EFF1F3"
-                    android:textSize="96px"
+                    android:textSize="64px"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
                 <TextView
-                    android:id="@+id/textView15"
+                    android:id="@+id/qualityRSSI"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="-40dB"
@@ -375,17 +377,18 @@
                     android:id="@+id/textView16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Channel"
+                    android:text="Net on Channel"
                     android:textColor="#EFF1F3"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView17"
+                    android:id="@+id/channel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0.0"
+                    android:text="2"
                     android:textColor="#EFF1F3"
                     android:textSize="96px"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -410,6 +413,7 @@
         android:id="@+id/apView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="16px"
         app:layout_constraintBottom_toTopOf="@+id/button1"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
@@ -420,9 +424,9 @@
         android:layout_height="wrap_content"
         android:foregroundTint="#0E273C"
         android:indeterminate="true"
-        android:indeterminateTint="#0E273C"
+        android:indeterminateTint="#f5d611"
         android:max="100"
-        android:progressTint="#0E273C"
+        android:progressTint="#f5d611"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/button1"
         app:layout_constraintEnd_toEndOf="@+id/apView"

@@ -7,7 +7,7 @@ public class AccessPoint {
     public int signalStrenght;
     public int frequency;
     public int channel;
-    public long timestamp;
+    public String time;
     public double distance;
     public int misurationNumber;
 
@@ -63,12 +63,12 @@ public class AccessPoint {
         this.channel = channel;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getTime() {
+        return time;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public double getDistance() {
