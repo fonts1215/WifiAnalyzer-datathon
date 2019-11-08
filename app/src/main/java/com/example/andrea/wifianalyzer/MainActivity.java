@@ -59,8 +59,6 @@ public class MainActivity extends Activity {
     final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION };
 
     private final int ALL_PERMISSION = 1;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,11 +143,6 @@ public class MainActivity extends Activity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-
-
-
-
                 }
             }
         };
@@ -170,7 +163,6 @@ public class MainActivity extends Activity {
                 progressBar.setVisibility(View.VISIBLE);
             }
         });
-
     }
 
     private void scanSuccess(WifiManager wifiManager) {
@@ -280,7 +272,6 @@ public class MainActivity extends Activity {
 
     public void checkPermission(){
         if (Build.VERSION.SDK_INT >= 23) {
-
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
                 Log.i("PERMISSION:::","Permission is NOT granted");
