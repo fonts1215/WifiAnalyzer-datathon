@@ -44,10 +44,12 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.andrea.wifianalyzer.Utils.Ping;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Permission;
 import java.text.SimpleDateFormat;
@@ -68,13 +70,12 @@ public class MainActivity extends Activity {
     TextView channel;
     TextView distance;
     TextView qualityRssi;
+    TextView ping;
 
     Context context = this;
     final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION };
 
     private final int ALL_PERMISSION = 1;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
     WifiInfo myConnInfo;
 
     @Override
@@ -91,7 +92,7 @@ public class MainActivity extends Activity {
         qualityRssi = findViewById(R.id.qualityRSSI);
         distance = findViewById(R.id.distance);
         channel = findViewById(R.id.channel);
-
+        ping = findViewById(R.id.ping);
 
         context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_WIFI_RTT);
         final WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
@@ -104,9 +105,14 @@ public class MainActivity extends Activity {
                     else
                         scanFailure(wifiManager);
 
-
                 if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
-                    getMyConnection(wifiManager);
+                    try {
+                        getMyConnection(wifiManager);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };
@@ -124,7 +130,13 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Log.i("::asdasd::", "STARTED");
                 wifiManager.startScan();
-                getMyConnection(wifiManager);
+                try {
+                    getMyConnection(wifiManager);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 progressBar.setVisibility(View.VISIBLE);
             }
         });
@@ -226,14 +238,15 @@ public class MainActivity extends Activity {
         return Math.pow(10.0, exp);
     }
 
-    private void getMyConnection(WifiManager wifiManager){
+    private void getMyConnection(WifiManager wifiManager)throws IOException, InterruptedException{
         Log.i("RECEIVED ACTION::::", "NET INFO");
         myConnInfo = wifiManager.getConnectionInfo();
         labelSSID.setText("" + myConnInfo.getSSID());
         speed.setText(""+myConnInfo.getLinkSpeed());
+        ping.setText(Ping.ping("8.8.8.8"));
 
         int qualityNumber = myConnInfo.getRssi();
-        String qualityLabel = "GOOD";
+        String qualityLabel = "EXCELLENT";
         if(qualityNumber < -89){
             quality.setTextSize(TypedValue.COMPLEX_UNIT_PX, 64);
             qualityLabel = "BAD";
