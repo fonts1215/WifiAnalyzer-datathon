@@ -71,6 +71,7 @@ public class MainActivity extends Activity {
     TextView distance;
     TextView qualityRssi;
     TextView ping;
+    String host = "192.168.1.1"; //host to set for sending data to JavaServer
 
     Context context = this;
     final String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION };
@@ -101,13 +102,13 @@ public class MainActivity extends Activity {
             @Override
             public void onReceive(Context c, Intent intent) {
                     if(intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false))
-                        scanSuccess(wifiManager);
+                        scanSuccess(wifiManager, host);
                     else
                         scanFailure(wifiManager);
 
                 if(intent.getAction().equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)){
                     try {
-                        getMyConnection(wifiManager);
+                        getMyConnection(wifiManager, "");
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -131,7 +132,7 @@ public class MainActivity extends Activity {
                 Log.i("::asdasd::", "STARTED");
                 wifiManager.startScan();
                 try {
-                    getMyConnection(wifiManager);
+                    getMyConnection(wifiManager, host);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -143,7 +144,7 @@ public class MainActivity extends Activity {
 
     }
 
-    private void scanSuccess(WifiManager wifiManager) {
+    private void scanSuccess(WifiManager wifiManager, String host) {
         List<ScanResult> results = wifiManager.getScanResults();
         Log.i("AndreaFonte", results.toString());
         progressBar.setVisibility(View.GONE);
@@ -156,7 +157,7 @@ public class MainActivity extends Activity {
             try {
                 RequestQueue requestQueue = Volley.newRequestQueue(context);
                 Log.i("VOLLEY", sr.SSID);
-                String URL = "http://192.168.43.250:8080/test/data/findReti";
+                String URL = "http://" + host + ":8080/test/data/findReti";
                 JSONObject jsonBody = new JSONObject();
                 jsonBody.put("venueName", sr.venueName);
                 jsonBody.put("frequency", sr.frequency);
@@ -176,12 +177,12 @@ public class MainActivity extends Activity {
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.i("VOLLEY", response);
+                        //Log.i("VOLLEY", response);
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", error.toString());
+                        //Log.e("VOLLEY", error.toString());
                     }
                 }) {
                     @Override
@@ -238,7 +239,7 @@ public class MainActivity extends Activity {
         return Math.pow(10.0, exp);
     }
 
-    private void getMyConnection(WifiManager wifiManager)throws IOException, InterruptedException{
+    private void getMyConnection(WifiManager wifiManager, String host)throws IOException, InterruptedException{
         Log.i("RECEIVED ACTION::::", "NET INFO");
         myConnInfo = wifiManager.getConnectionInfo();
         labelSSID.setText("" + myConnInfo.getSSID());
@@ -273,7 +274,7 @@ public class MainActivity extends Activity {
         distance.setText("" + String.format("%.2f", calculateDistance(myConnInfo.getRssi(), myConnInfo.getFrequency())));
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(context);
-            String URL = "http://192.168.43.250:8080/test/data/myRete";
+            String URL = "http://" + host + "/test/data/myRete";
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("describeContents", myConnInfo.describeContents());
             jsonBody.put("bbsid", myConnInfo.getBSSID());
@@ -287,12 +288,12 @@ public class MainActivity extends Activity {
             StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Log.i("VOLLEY", response);
+                    //Log.i("VOLLEY", response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Log.e("VOLLEY", error.toString());
+                    //Log.e("VOLLEY", error.toString());
                 }
             }) {
                 @Override
@@ -305,7 +306,7 @@ public class MainActivity extends Activity {
                     try {
                         return requestBody == null ? null : requestBody.getBytes("utf-8");
                     } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                        //VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
                         return null;
                     }
                 }
@@ -330,7 +331,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
     }
-
 
     public List<AccessPoint> parseData(List<ScanResult> wifi_list, String time){
         List<AccessPoint> accessPointList = new ArrayList<>();
